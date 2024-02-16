@@ -160,7 +160,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -405,8 +405,8 @@ Transform:
   m_GameObject: {fileID: 636044712}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -10, z: 0}
-  m_LocalScale: {x: 200, y: 10, z: 200}
+  m_LocalPosition: {x: 0, y: -5, z: 0}
+  m_LocalScale: {x: 100, y: 10, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1434278927}
@@ -551,6 +551,7 @@ GameObject:
   m_Component:
   - component: {fileID: 874974700}
   - component: {fileID: 874974701}
+  - component: {fileID: 874974702}
   m_Layer: 0
   m_Name: SceneCore
   m_TagString: SceneCore
@@ -587,7 +588,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d36ff6b5a533c6943a653330f75e28de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playableAreaSize: {x: 10, y: 10}
+--- !u!114 &874974702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 874974699}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a205bf83109480e4d823e03a008c8f1b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playableAreaSize:
+    x: 20
+    y: 20
+  agentAddress: DefaultAgent
+  initialAgentAmountRange:
+    x: 3
+    y: 5
+  maxAgents: 30
+  newAgentSpawnTimeoutRange:
+    x: 2
+    y: 6
 --- !u!1 &1310927479
 GameObject:
   m_ObjectHideFlags: 0
@@ -603,7 +626,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &1310927480
 Transform:
@@ -613,7 +636,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1310927479}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -639,8 +662,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 200, y: 10, z: 200}
-  m_Center: {x: 0, y: -10, z: 0}
+  m_Size: {x: 100, y: 10, z: 100}
+  m_Center: {x: 0, y: -5, z: 0}
 --- !u!1 &1434278926
 GameObject:
   m_ObjectHideFlags: 0

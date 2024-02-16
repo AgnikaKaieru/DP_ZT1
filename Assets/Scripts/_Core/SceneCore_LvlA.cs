@@ -2,25 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.ResourceManagement;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
+
+using Components.Agents;
 
 namespace Core
 {
     public class SceneCore_LvlA : SceneCore
     {
-        [Tooltip("Size of area agents can move on.")]
-        [SerializeField] private Vector2 playableAreaSize = new Vector2 (10, 10);
+        private IAgentManager agentManager;
 
-
+        // Initialization //
         public override void Initialize_SceneCore()
         {
             base.Initialize_SceneCore();
 
-            //Prepare playable area
-            playableAreaSize = math.clamp(playableAreaSize, new float2(1, 1), new float2(100, 100));
-
-            //Spawn and initialize agents
+            agentManager = GetComponent<IAgentManager>();
+            agentManager.Initialize_AgentManager();
         }
 
+        // Scene start //
         public override void StartScene()
         {
             base.StartScene();
