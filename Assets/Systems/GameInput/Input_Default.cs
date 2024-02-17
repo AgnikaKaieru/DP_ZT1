@@ -37,6 +37,24 @@ namespace GameInput
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Select"",
+                    ""type"": ""Button"",
+                    ""id"": ""35da9ef3-ac86-4ea2-b591-2a1671ac2260"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""5bbac171-d11e-4990-8b1d-871bbfa415cb"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -149,6 +167,28 @@ namespace GameInput
                     ""action"": ""CameraMovement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4fae779d-3293-4686-b267-14875b9843c9"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Select"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8e6d1c61-10b3-482d-9ef3-b204c4e2e0e3"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -158,6 +198,8 @@ namespace GameInput
             // Default
             m_Default = asset.FindActionMap("Default", throwIfNotFound: true);
             m_Default_CameraMovement = m_Default.FindAction("CameraMovement", throwIfNotFound: true);
+            m_Default_Select = m_Default.FindAction("Select", throwIfNotFound: true);
+            m_Default_Pause = m_Default.FindAction("Pause", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -220,11 +262,15 @@ namespace GameInput
         private readonly InputActionMap m_Default;
         private List<IDefaultActions> m_DefaultActionsCallbackInterfaces = new List<IDefaultActions>();
         private readonly InputAction m_Default_CameraMovement;
+        private readonly InputAction m_Default_Select;
+        private readonly InputAction m_Default_Pause;
         public struct DefaultActions
         {
             private @Input_Default m_Wrapper;
             public DefaultActions(@Input_Default wrapper) { m_Wrapper = wrapper; }
             public InputAction @CameraMovement => m_Wrapper.m_Default_CameraMovement;
+            public InputAction @Select => m_Wrapper.m_Default_Select;
+            public InputAction @Pause => m_Wrapper.m_Default_Pause;
             public InputActionMap Get() { return m_Wrapper.m_Default; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -237,6 +283,12 @@ namespace GameInput
                 @CameraMovement.started += instance.OnCameraMovement;
                 @CameraMovement.performed += instance.OnCameraMovement;
                 @CameraMovement.canceled += instance.OnCameraMovement;
+                @Select.started += instance.OnSelect;
+                @Select.performed += instance.OnSelect;
+                @Select.canceled += instance.OnSelect;
+                @Pause.started += instance.OnPause;
+                @Pause.performed += instance.OnPause;
+                @Pause.canceled += instance.OnPause;
             }
 
             private void UnregisterCallbacks(IDefaultActions instance)
@@ -244,6 +296,12 @@ namespace GameInput
                 @CameraMovement.started -= instance.OnCameraMovement;
                 @CameraMovement.performed -= instance.OnCameraMovement;
                 @CameraMovement.canceled -= instance.OnCameraMovement;
+                @Select.started -= instance.OnSelect;
+                @Select.performed -= instance.OnSelect;
+                @Select.canceled -= instance.OnSelect;
+                @Pause.started -= instance.OnPause;
+                @Pause.performed -= instance.OnPause;
+                @Pause.canceled -= instance.OnPause;
             }
 
             public void RemoveCallbacks(IDefaultActions instance)
@@ -264,6 +322,8 @@ namespace GameInput
         public interface IDefaultActions
         {
             void OnCameraMovement(InputAction.CallbackContext context);
+            void OnSelect(InputAction.CallbackContext context);
+            void OnPause(InputAction.CallbackContext context);
         }
     }
 }

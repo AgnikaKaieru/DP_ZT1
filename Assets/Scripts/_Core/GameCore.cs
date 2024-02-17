@@ -23,6 +23,7 @@ namespace Core
             //Initialize basic components
             Debug.Log("<color=white><b>Initializing core...</b></color>");
             inputManager.Initialize_Input();
+            inputManager.Event_PauseButtonPressed += PauseInput;
 
             //Initialize scene core
             GameObject.FindGameObjectWithTag("SceneCore").GetComponent<SceneCore>().Initialize_SceneCore();
@@ -30,19 +31,32 @@ namespace Core
         }
 
         // Pause event //
+        [Header("PauseEvent")]
+        [SerializeField] private GameObject pauseIndicator;
         public bool paused { get; private set; }
         public event Action<bool> Event_Pause;
         public void Pause()
         {
             if (paused) return;
             paused = true;
-            Event_Pause.Invoke(true);
+            if (Event_Pause != null)
+                Event_Pause.Invoke(true);
+
+            pauseIndicator.SetActive(true);
         }
         public void Resume()
         {
             if (!paused) return;
             paused = false;
-            Event_Pause.Invoke(false);
+            if (Event_Pause != null)
+                Event_Pause.Invoke(false);
+
+            pauseIndicator.SetActive(false);
+        }
+        private void PauseInput()
+        {
+            if (!paused) Pause();
+            else Resume();
         }
 
         // UI //
