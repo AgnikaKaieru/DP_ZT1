@@ -14,6 +14,7 @@ namespace Core
         private void Awake()
         {
             Instance = this;
+            pauseIndicator.SetActive(false);
             Initialize_Core();
         }
 
@@ -24,6 +25,7 @@ namespace Core
             Debug.Log("<color=white><b>Initializing core...</b></color>");
             inputManager.Initialize_Input();
             inputManager.Event_PauseButtonPressed += PauseInput;
+            inputManager.Event_HelpButtonPressed += HelpInput;
 
             //Initialize scene core
             GameObject.FindGameObjectWithTag("SceneCore").GetComponent<SceneCore>().Initialize_SceneCore();
@@ -62,5 +64,8 @@ namespace Core
         // UI //
         [Header("UI")]
         public Transform mainCanvas;
+        [SerializeField] private GameObject helpDialogue;
+
+        private void HelpInput() { helpDialogue.SetActive(!helpDialogue.activeInHierarchy); }
     }
 }

@@ -7,6 +7,7 @@ using UnityEngine.AI;
 using Components.Agents;
 using GameInput;
 using Core;
+using System;
 
 namespace Agents
 {
@@ -18,11 +19,18 @@ namespace Agents
 #pragma warning disable 0649
         private AgentState agentState = AgentState.init;
 #pragma warning disable 0649
+        private int id;
+        private string agentName;
+        public event Action Event_OnAgentRelease;
 
-        public void InitializeAgent(IAgentManager agentManagerP)
+        public string GetAgentName() { return agentName; }
+
+        public void InitializeAgent(IAgentManager agentManagerP, int idp)
         {
             Debug.Log("<color=white><b>Initializing agent...</b></color>");
             agentManager = agentManagerP;
+            id = idp;
+            agentName = id < 10 ? "Entity 0" + id : "Entity " + id;
             navPath = new NavMeshPath();
 
             moveSpeed = UnityEngine.Random.Range(1.0f, 3.0f);
@@ -46,6 +54,10 @@ namespace Agents
         // Stats //
         [SerializeField] private int maxHp = 3;
         private int currentHp;
+        public event Action<int> Event_OnHpValueChange;
+
+        public int GetAgentMaxHp() { return maxHp; }
+        public int GetAgentCurrentHp() { return currentHp; }
         public void Damage(int amount) 
         {
             currentHp -= amount;
@@ -56,6 +68,9 @@ namespace Agents
                 agentState = AgentState.despawning;
                 StartCoroutine(EraseAndRelease());
             }
+
+            if (Event_OnHpValueChange != null)
+                Event_OnHpValueChange.Invoke(currentHp);
         }
 
 
@@ -173,6 +188,8 @@ namespace Agents
                 //yield return new WaitForEndOfFrame(); //Does not work for some reason...
                 yield return new WaitForFixedUpdate();
             }
+            if(Event_OnAgentRelease != null)
+                Event_OnAgentRelease.Invoke();
             agentManager.ReleaseAgent(gameObject);
         }
 
@@ -184,13 +201,12 @@ namespace Agents
         public void OnHoverExit() { ToggleSelectionArrow(false); }
         public void OnSelect()
         {
-            Debug.Log("Selected: " + gameObject.name);
-            //Send data to UI
+            UI_AgentInfo.Instance.SetAgent(this);
             ToggleSelectionCircle(true);
         }
         public void OnRelease()
         {
-            //Remove data from UI
+            UI_AgentInfo.Instance.SetAgent(null);
             ToggleSelectionCircle(false);
         }
 

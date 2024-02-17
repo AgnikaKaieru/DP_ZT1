@@ -33,6 +33,10 @@ namespace GameInput
             inputActions.Default.Pause.performed += Pause;
             inputActions.Default.Pause.canceled += Pause;
 
+            inputActions.Default.ToggleHelpDialogue.started += Help;
+            inputActions.Default.ToggleHelpDialogue.performed += Help;
+            inputActions.Default.ToggleHelpDialogue.canceled += Help;
+
             inputActions.Default.CameraMovement.started += MoveCamera;
             inputActions.Default.CameraMovement.performed += MoveCamera;
             inputActions.Default.CameraMovement.canceled += MoveCamera;
@@ -52,6 +56,7 @@ namespace GameInput
         // Input //
         public bool pause;
         public event Action Event_PauseButtonPressed;
+        public event Action Event_HelpButtonPressed;
         public Vector2 moveInput;
         public bool select, pointTo;
         private Transform hoveredObject, selectedObject;
@@ -68,6 +73,17 @@ namespace GameInput
                     break;
                 case InputActionPhase.Performed: pause = false; break;
                 case InputActionPhase.Canceled: pause = false; break;
+            }
+        }
+        private void Help(InputAction.CallbackContext context)
+        {
+            switch (context.phase)
+            {
+                default: break;
+                case InputActionPhase.Started:
+                    if (Event_HelpButtonPressed != null)
+                        Event_HelpButtonPressed.Invoke();
+                    break;
             }
         }
         private void MoveCamera(InputAction.CallbackContext context)

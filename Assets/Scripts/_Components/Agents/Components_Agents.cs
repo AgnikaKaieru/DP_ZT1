@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
@@ -15,10 +16,17 @@ namespace Components.Agents
     }
     public interface IAgent
     {
-        public void InitializeAgent(IAgentManager agentManager);
-
+        public string GetAgentName();
         public float GetMoveSpeed();
 
+        //Initialization
+        public event Action Event_OnAgentRelease;
+        public void InitializeAgent(IAgentManager agentManager, int id);
+
+        //Hp
+        public event Action<int> Event_OnHpValueChange;
+        public int GetAgentMaxHp();
+        public int GetAgentCurrentHp();
         public void Damage(int amount);
     }
 }

@@ -26,7 +26,7 @@ namespace Agents
         [SerializeField] private float2 newAgentSpawnTimeoutRange = new float2(2, 6);
         private float2 areaExtent;
         private List<GameObject> agentList = new List<GameObject>();
-
+        private int idCounter = 0;
 
 
         // Initialization //
@@ -88,7 +88,8 @@ namespace Agents
         {
             GameObject agent = handle.Result;
             agentList.Add(agent);
-            agent.GetComponent<IAgent>().InitializeAgent(this);
+            agent.GetComponent<IAgent>().InitializeAgent(this, idCounter);
+            idCounter++;
         }
         public void ReleaseAgent(GameObject agent)
         {

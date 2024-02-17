@@ -55,6 +55,15 @@ namespace GameInput
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ToggleHelpDialogue"",
+                    ""type"": ""Button"",
+                    ""id"": ""ebb28281-da9c-43d2-bbf7-8525c81fa8ec"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -189,6 +198,17 @@ namespace GameInput
                     ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1b37d275-eba9-4a19-b413-1bd41e54c0b9"",
+                    ""path"": ""<Keyboard>/h"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ToggleHelpDialogue"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -200,6 +220,7 @@ namespace GameInput
             m_Default_CameraMovement = m_Default.FindAction("CameraMovement", throwIfNotFound: true);
             m_Default_Select = m_Default.FindAction("Select", throwIfNotFound: true);
             m_Default_Pause = m_Default.FindAction("Pause", throwIfNotFound: true);
+            m_Default_ToggleHelpDialogue = m_Default.FindAction("ToggleHelpDialogue", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -264,6 +285,7 @@ namespace GameInput
         private readonly InputAction m_Default_CameraMovement;
         private readonly InputAction m_Default_Select;
         private readonly InputAction m_Default_Pause;
+        private readonly InputAction m_Default_ToggleHelpDialogue;
         public struct DefaultActions
         {
             private @Input_Default m_Wrapper;
@@ -271,6 +293,7 @@ namespace GameInput
             public InputAction @CameraMovement => m_Wrapper.m_Default_CameraMovement;
             public InputAction @Select => m_Wrapper.m_Default_Select;
             public InputAction @Pause => m_Wrapper.m_Default_Pause;
+            public InputAction @ToggleHelpDialogue => m_Wrapper.m_Default_ToggleHelpDialogue;
             public InputActionMap Get() { return m_Wrapper.m_Default; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -289,6 +312,9 @@ namespace GameInput
                 @Pause.started += instance.OnPause;
                 @Pause.performed += instance.OnPause;
                 @Pause.canceled += instance.OnPause;
+                @ToggleHelpDialogue.started += instance.OnToggleHelpDialogue;
+                @ToggleHelpDialogue.performed += instance.OnToggleHelpDialogue;
+                @ToggleHelpDialogue.canceled += instance.OnToggleHelpDialogue;
             }
 
             private void UnregisterCallbacks(IDefaultActions instance)
@@ -302,6 +328,9 @@ namespace GameInput
                 @Pause.started -= instance.OnPause;
                 @Pause.performed -= instance.OnPause;
                 @Pause.canceled -= instance.OnPause;
+                @ToggleHelpDialogue.started -= instance.OnToggleHelpDialogue;
+                @ToggleHelpDialogue.performed -= instance.OnToggleHelpDialogue;
+                @ToggleHelpDialogue.canceled -= instance.OnToggleHelpDialogue;
             }
 
             public void RemoveCallbacks(IDefaultActions instance)
@@ -324,6 +353,7 @@ namespace GameInput
             void OnCameraMovement(InputAction.CallbackContext context);
             void OnSelect(InputAction.CallbackContext context);
             void OnPause(InputAction.CallbackContext context);
+            void OnToggleHelpDialogue(InputAction.CallbackContext context);
         }
     }
 }
