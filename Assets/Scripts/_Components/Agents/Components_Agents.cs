@@ -14,5 +14,7 @@ namespace Components.Agents
     public interface IAgent
     {
         public void InitializeAgent(IAgentManager agentManager);
+
+        public float GetMoveSpeed();
     }
 }

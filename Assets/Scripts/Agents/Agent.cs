@@ -79,6 +79,7 @@ namespace Agents
         private float destinationReachedThreshold = 0.5f;
         private int currentWaypointIndex = 1;
 
+        public float GetMoveSpeed() { return moveSpeed; }
         private void SelectDestination()
         {
             bool foundDestination = false;
@@ -117,6 +118,32 @@ namespace Agents
 
 
 
+        [Header("Physics")]
+        [SerializeField] private Rigidbody rb;
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            switch (collision.gameObject.tag)
+            {
+                default: break;
+                case "Agent":
+                    float3 contactNormal = collision.contacts[0].normal;
+                    float knockBackForce;
+                    if (collision.gameObject.TryGetComponent(out IAgent agent))
+                        knockBackForce = agent.GetMoveSpeed() * 2;
+                    else
+                        knockBackForce = 4;
+
+                    contactNormal.y += 1.0f;
+                    rb.AddForce(contactNormal * knockBackForce, ForceMode.Impulse);
+                    break;
+            }
+        }
+
+
+
+
+
         // Selection //
         // ISelectableObject //
         public void OnHoverEnter() { ToggleSelectionArrow(true); }
@@ -144,6 +171,9 @@ namespace Agents
 
         private void ToggleSelectionArrow(bool b) { selectionArrow.SetActive(b); }
         private void ToggleSelectionCircle(bool b) { selectionCircle.SetActive(b); }
+
+
+
 
 
         // Editor //

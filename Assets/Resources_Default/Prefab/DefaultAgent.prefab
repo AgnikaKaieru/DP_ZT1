@@ -99,8 +99,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43a71b75e337b5e49a9a42fe8dee52ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveSpeed: 1
+  rb: {fileID: 1597288310314926454}
   selectionArrow: {fileID: 801426030910009268}
   selectionCircle: {fileID: 8966721284864092527}
+  debug: 1
 --- !u!1 &7107007433410955183
 GameObject:
   m_ObjectHideFlags: 0
