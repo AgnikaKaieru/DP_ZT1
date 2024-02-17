@@ -717,6 +717,7 @@ MonoBehaviour:
   newAgentSpawnTimeoutRange:
     x: 2
     y: 6
+  debug: 1
 --- !u!1001 &1170180380
 PrefabInstance:
   m_ObjectHideFlags: 0

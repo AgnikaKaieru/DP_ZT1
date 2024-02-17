@@ -1,12 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-using Components.Agents;
-using Core;
 using Unity.Mathematics;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+
+using Components.Agents;
+using Core;
 
 namespace Agents
 {
@@ -100,10 +100,9 @@ namespace Agents
 
 
 
-
         // Editor //
 #if UNITY_EDITOR
-        [Header("Debug")]
+        [Header("Editor")]
         [SerializeField] private bool debug = true;
         void OnDrawGizmosSelected()
         {

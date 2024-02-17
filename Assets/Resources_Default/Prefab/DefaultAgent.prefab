@@ -99,8 +99,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43a71b75e337b5e49a9a42fe8dee52ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHp: 3
   moveSpeed: 1
   rb: {fileID: 1597288310314926454}
+  col: {fileID: 6612163925155030421}
+  _renderer: {fileID: 5572546661383533195}
   selectionArrow: {fileID: 801426030910009268}
   selectionCircle: {fileID: 8966721284864092527}
   debug: 1
@@ -165,7 +168,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 1787e764968065c4098dab02013afa8f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -14,7 +14,7 @@ namespace Agents
     public class Agent : MonoBehaviour, IAgent, ISelectableObject
     {
         private IAgentManager agentManager;
-        private enum AgentState { init, idle, moving }
+        private enum AgentState { init, idle, moving, despawning }
 #pragma warning disable 0649
         private AgentState agentState = AgentState.init;
 #pragma warning disable 0649
@@ -26,6 +26,7 @@ namespace Agents
             navPath = new NavMeshPath();
 
             moveSpeed = UnityEngine.Random.Range(1.0f, 3.0f);
+            currentHp = maxHp;
 
             agentState = AgentState.idle;
             GameCore.Instance.Event_Pause += PauseEvent;
@@ -43,8 +44,24 @@ namespace Agents
 
 
         // Stats //
-        //[SerializeField] private int hp = 3;
+        [SerializeField] private int maxHp = 3;
+        private int currentHp;
+        public void Damage(int amount) 
+        {
+            currentHp -= amount;
+            if(currentHp<= 0)
+            {
+                rb.isKinematic = true;
+                col.enabled = false;
+                agentState = AgentState.despawning;
+                StartCoroutine(EraseAndRelease());
+            }
+        }
 
+
+
+
+        // Logic //
         private float waitTimeout = 1.0f, waitTimeoutDelta =1.0f;
 
         private void Update()
@@ -120,6 +137,7 @@ namespace Agents
 
         [Header("Physics")]
         [SerializeField] private Rigidbody rb;
+        [SerializeField] private Collider col;
 
         private void OnCollisionEnter(Collision collision)
         {
@@ -130,7 +148,10 @@ namespace Agents
                     float3 contactNormal = collision.contacts[0].normal;
                     float knockBackForce;
                     if (collision.gameObject.TryGetComponent(out IAgent agent))
+                    {
                         knockBackForce = agent.GetMoveSpeed() * 2;
+                        agent.Damage(1);
+                    }
                     else
                         knockBackForce = 4;
 
@@ -140,7 +161,20 @@ namespace Agents
             }
         }
 
-
+        // Graphic //
+        [SerializeField] private Renderer _renderer;
+        private IEnumerator EraseAndRelease()
+        {
+            float intensity = 0.0f;
+            while (intensity < 1.0f)
+            {
+                intensity += 1 * Time.deltaTime;
+                _renderer.material.SetFloat("_DE_Value", intensity);
+                //yield return new WaitForEndOfFrame(); //Does not work for some reason...
+                yield return new WaitForFixedUpdate();
+            }
+            agentManager.ReleaseAgent(gameObject);
+        }
 
 
 
@@ -178,7 +212,7 @@ namespace Agents
 
         // Editor //
 #if UNITY_EDITOR
-        [Header("Debug")]
+        [Header("Editor")]
         [SerializeField] private bool debug = true;
         void OnDrawGizmosSelected()
         {
