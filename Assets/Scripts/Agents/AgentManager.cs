@@ -103,8 +103,11 @@ namespace Agents
 
         // Editor //
 #if UNITY_EDITOR
+        [Header("Debug")]
+        [SerializeField] private bool debug = true;
         void OnDrawGizmosSelected()
         {
+            if (!debug) return;
             //Draw playable area size.
             Gizmos.color = Color.green;
             Gizmos.DrawWireCube(transform.position, new float3(playableAreaSize.x, 2, playableAreaSize.y));
