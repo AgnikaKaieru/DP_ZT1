@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
@@ -7,7 +8,7 @@ using UnityEngine.AI;
 using Components.Agents;
 using GameInput;
 using Core;
-using System;
+using Features;
 
 namespace Agents
 {
@@ -52,6 +53,7 @@ namespace Agents
 
 
         // Stats //
+        [Header("Stats")]
         [SerializeField] private int maxHp = 3;
         private int currentHp;
         public event Action<int> Event_OnHpValueChange;
@@ -172,11 +174,22 @@ namespace Agents
 
                     contactNormal.y += 1.0f;
                     rb.AddForce(contactNormal * knockBackForce, ForceMode.Impulse);
+
+                    float distanceFromCamera = math.distance(collision.contacts[0].point, Camera.main.transform.position);
+                    //Debug.Log("Distance of hit: " + distanceFromCamera);
+                    if (distanceFromCamera < cameraShakeMaxDistance)
+                    {
+                        float distanveMod = (cameraShakeMaxDistance - distanceFromCamera) * 0.1f;
+                        float intensity = cameraShakeBaseIntensity * distanveMod;
+                        float duration = cameraShakeBaseDuration * distanveMod;
+                        CinemachineShake.Instance.ShakeCamera(intensity, duration);
+                    }
                     break;
             }
         }
 
         // Graphic //
+        [Header("Graphic")]
         [SerializeField] private Renderer _renderer;
         private IEnumerator EraseAndRelease()
         {
@@ -192,6 +205,18 @@ namespace Agents
                 Event_OnAgentRelease.Invoke();
             agentManager.ReleaseAgent(gameObject);
         }
+
+
+
+
+
+        // FX //
+        [Header("FX")]
+        [SerializeField] private int cameraShakeMaxDistance = 20;
+        [SerializeField] private float cameraShakeBaseIntensity = 3;
+        [SerializeField] private float cameraShakeBaseDuration = 0.2f;
+
+
 
 
 

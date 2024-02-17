@@ -41,6 +41,7 @@ namespace Core
         {
             if (paused) return;
             paused = true;
+            Time.timeScale = 0.0f;
             if (Event_Pause != null)
                 Event_Pause.Invoke(true);
 
@@ -52,6 +53,7 @@ namespace Core
             paused = false;
             if (Event_Pause != null)
                 Event_Pause.Invoke(false);
+            Time.timeScale = 1.0f;
 
             pauseIndicator.SetActive(false);
         }

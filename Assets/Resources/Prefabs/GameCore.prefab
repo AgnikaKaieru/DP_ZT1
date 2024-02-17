@@ -62,8 +62,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45a8e7de54af0a44aab8b2f672713497, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  virtualCamera: {fileID: 0}
+  cameraTarget: {fileID: 0}
+  cameraMoveSpeed: 10
+  cameraZoomSpeed: 2
+  cameraZoomDamping: 2
+  cameraMoveLimitRange: {x: 5, y: 5}
+  cameraZoomRange: {x: 10, y: 30}
   pause: 0
   moveInput: {x: 0, y: 0}
+  scrollInput: {x: 0, y: 0}
   select: 0
   pointTo: 0
 --- !u!1 &4252242673778854386
@@ -369,8 +377,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: <b>H</b> - Hide tips\n\n<b>ESC</b> - Pause game\n<b>L Mouse</b> - Select
-    agent
+  m_text: '<b>H</b> - Hide tips\n
+
+    <b>ESC</b> - Pause game\n
+
+    <b>WSAD</b>
+    - Move camera\n<b>Scroll</b> - Zoom camera\n<b>L Mouse</b> - Select agent'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

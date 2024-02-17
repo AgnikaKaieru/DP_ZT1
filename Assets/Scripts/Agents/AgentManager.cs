@@ -5,6 +5,7 @@ using Unity.Mathematics;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
+using GameInput;
 using Components.Agents;
 using Core;
 
@@ -56,8 +57,10 @@ namespace Agents
         private void Initialize_PlayableArea()
         {
             playableAreaSize = math.clamp(playableAreaSize, new float2(1, 1), new float2(100, 100));
-            areaExtent.x = playableAreaSize.x / 2;
-            areaExtent.y = playableAreaSize.y / 2;
+            areaExtent = playableAreaSize / 2;
+            //areaExtent.x = playableAreaSize.x / 2;
+            //areaExtent.y = playableAreaSize.y / 2;
+            InputManager.Instance.cameraMoveLimitRange = areaExtent;
         }
         /// <summary>
         /// Returns point inside area on specified height.

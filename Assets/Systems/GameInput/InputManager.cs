@@ -1,8 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Cinemachine;
+using Codice.Client.BaseCommands;
+using Codice.CM.Common;
 
 namespace GameInput
 {
@@ -22,11 +26,21 @@ namespace GameInput
         public static InputManager Instance {  get; private set; }
         private Input_Default inputActions;
         private bool active = false;
+        [SerializeField] private CinemachineVirtualCamera virtualCamera;
+        private Cinemachine3rdPersonFollow cinemashineFollow;
+        [SerializeField] private Transform cameraTarget;
+        [SerializeField] private float cameraMoveSpeed = 10.0f, cameraZoomSpeed = 2.0f, cameraZoomDamping = 1.0f;
+        private float cameraDistance, cameraDistanceTarget;
+        public Vector2 cameraMoveLimitRange = new Vector2(5,5);
+        public Vector2 cameraZoomRange = new Vector2(10,30);
 
         public void Initialize_Input()
         {
             Debug.Log("<color=white><b>Initializing input manager...</b></color>");
             Instance = this;
+            cinemashineFollow = virtualCamera.GetCinemachineComponent<Cinemachine3rdPersonFollow>();
+            cameraDistanceTarget = cinemashineFollow.CameraDistance;
+            cameraZoomRange = new Vector2(10, 30);
             inputActions = new Input_Default();
 
             inputActions.Default.Pause.started += Pause;
@@ -41,6 +55,10 @@ namespace GameInput
             inputActions.Default.CameraMovement.performed += MoveCamera;
             inputActions.Default.CameraMovement.canceled += MoveCamera;
 
+            inputActions.Default.Scroll.started += CameraZoom;
+            inputActions.Default.Scroll.performed += CameraZoom;
+            inputActions.Default.Scroll.canceled += CameraZoom;
+
             inputActions.Default.Select.started += Select;
             inputActions.Default.Select.performed += Select;
             inputActions.Default.Select.canceled += Select;
@@ -54,10 +72,12 @@ namespace GameInput
 
 
         // Input //
+        [Header("Input values")]
         public bool pause;
         public event Action Event_PauseButtonPressed;
         public event Action Event_HelpButtonPressed;
         public Vector2 moveInput;
+        public Vector2 scrollInput;
         public bool select, pointTo;
         private Transform hoveredObject, selectedObject;
 
@@ -88,13 +108,18 @@ namespace GameInput
         }
         private void MoveCamera(InputAction.CallbackContext context)
         {
-            moveInput = context.ReadValue<Vector2>();
             switch (context.phase)
             {
-                default: break;
-                case InputActionPhase.Performed:
-                    Debug.Log("Input test: " + moveInput);
-                    break;
+                default: moveInput = Vector2.zero; break;
+                case InputActionPhase.Performed: moveInput = context.ReadValue<Vector2>(); break;
+            }
+        }
+        private void CameraZoom(InputAction.CallbackContext context)
+        {
+            switch (context.phase)
+            {
+                default: scrollInput = Vector2.zero; break;
+                case InputActionPhase.Performed: scrollInput = context.ReadValue<Vector2>(); break;
             }
         }
         private void Select(InputAction.CallbackContext context)
@@ -110,10 +135,46 @@ namespace GameInput
 
 
 
+
         // Update //
         private void Update()
         {
             if (!active) return;
+            Update_Camera();
+            Update_ObjectSelection();
+        }
+
+
+
+        // Camera logic //
+        private void Update_Camera()
+        {
+            //Camera movement
+            if (moveInput != Vector2.zero)
+            {
+                Vector3 positionModvalue = new Vector3(moveInput.x, 0, moveInput.y) * cameraMoveSpeed * Time.deltaTime;
+                Vector3 newPosition = cameraTarget.transform.position + positionModvalue;
+                newPosition.x = math.clamp(newPosition.x, -cameraMoveLimitRange.x, cameraMoveLimitRange.x);
+                newPosition.z = math.clamp(newPosition.z, -cameraMoveLimitRange.y, cameraMoveLimitRange.y);
+                cameraTarget.transform.position = newPosition;
+            }
+
+            //Camera zoom
+            if (scrollInput.y != 0.0f)
+            {
+                float zoomAmount = -scrollInput.y * cameraZoomSpeed * Time.deltaTime;
+                cameraDistanceTarget = math.clamp(cameraDistanceTarget + zoomAmount, cameraZoomRange.x, cameraZoomRange.y);
+            }
+            cameraDistance = Mathf.Lerp(cameraDistance, cameraDistanceTarget, cameraZoomDamping * Time.deltaTime);
+            cinemashineFollow.CameraDistance = cameraDistance;
+        }
+
+
+
+        // Object selection //
+        private void Update_ObjectSelection()
+        {
+            //Object selection
             RaycastHit hitInfo = new RaycastHit();
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo, 100.0f))
             {

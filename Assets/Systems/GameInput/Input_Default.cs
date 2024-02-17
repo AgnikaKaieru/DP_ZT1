@@ -30,6 +30,15 @@ namespace GameInput
             ""id"": ""d523fc9b-55fe-4270-819b-986011dd102e"",
             ""actions"": [
                 {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""5bbac171-d11e-4990-8b1d-871bbfa415cb"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""CameraMovement"",
                     ""type"": ""Value"",
                     ""id"": ""f7f85290-d8a4-4474-9188-b24ffacd6112"",
@@ -39,18 +48,18 @@ namespace GameInput
                     ""initialStateCheck"": true
                 },
                 {
+                    ""name"": ""Scroll"",
+                    ""type"": ""Value"",
+                    ""id"": ""583e6787-7659-4da6-b53f-a6ba9488953c"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
                     ""name"": ""Select"",
                     ""type"": ""Button"",
                     ""id"": ""35da9ef3-ac86-4ea2-b591-2a1671ac2260"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Pause"",
-                    ""type"": ""Button"",
-                    ""id"": ""5bbac171-d11e-4990-8b1d-871bbfa415cb"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -190,23 +199,34 @@ namespace GameInput
                 },
                 {
                     ""name"": """",
-                    ""id"": ""8e6d1c61-10b3-482d-9ef3-b204c4e2e0e3"",
-                    ""path"": ""<Keyboard>/escape"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Pause"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""1b37d275-eba9-4a19-b413-1bd41e54c0b9"",
                     ""path"": ""<Keyboard>/h"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""ToggleHelpDialogue"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""187c7a3c-53b2-4317-95ef-8406ff03c4bb"",
+                    ""path"": ""<Mouse>/scroll"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Scroll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8e6d1c61-10b3-482d-9ef3-b204c4e2e0e3"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -217,9 +237,10 @@ namespace GameInput
 }");
             // Default
             m_Default = asset.FindActionMap("Default", throwIfNotFound: true);
-            m_Default_CameraMovement = m_Default.FindAction("CameraMovement", throwIfNotFound: true);
-            m_Default_Select = m_Default.FindAction("Select", throwIfNotFound: true);
             m_Default_Pause = m_Default.FindAction("Pause", throwIfNotFound: true);
+            m_Default_CameraMovement = m_Default.FindAction("CameraMovement", throwIfNotFound: true);
+            m_Default_Scroll = m_Default.FindAction("Scroll", throwIfNotFound: true);
+            m_Default_Select = m_Default.FindAction("Select", throwIfNotFound: true);
             m_Default_ToggleHelpDialogue = m_Default.FindAction("ToggleHelpDialogue", throwIfNotFound: true);
         }
 
@@ -282,17 +303,19 @@ namespace GameInput
         // Default
         private readonly InputActionMap m_Default;
         private List<IDefaultActions> m_DefaultActionsCallbackInterfaces = new List<IDefaultActions>();
-        private readonly InputAction m_Default_CameraMovement;
-        private readonly InputAction m_Default_Select;
         private readonly InputAction m_Default_Pause;
+        private readonly InputAction m_Default_CameraMovement;
+        private readonly InputAction m_Default_Scroll;
+        private readonly InputAction m_Default_Select;
         private readonly InputAction m_Default_ToggleHelpDialogue;
         public struct DefaultActions
         {
             private @Input_Default m_Wrapper;
             public DefaultActions(@Input_Default wrapper) { m_Wrapper = wrapper; }
-            public InputAction @CameraMovement => m_Wrapper.m_Default_CameraMovement;
-            public InputAction @Select => m_Wrapper.m_Default_Select;
             public InputAction @Pause => m_Wrapper.m_Default_Pause;
+            public InputAction @CameraMovement => m_Wrapper.m_Default_CameraMovement;
+            public InputAction @Scroll => m_Wrapper.m_Default_Scroll;
+            public InputAction @Select => m_Wrapper.m_Default_Select;
             public InputAction @ToggleHelpDialogue => m_Wrapper.m_Default_ToggleHelpDialogue;
             public InputActionMap Get() { return m_Wrapper.m_Default; }
             public void Enable() { Get().Enable(); }
@@ -303,15 +326,18 @@ namespace GameInput
             {
                 if (instance == null || m_Wrapper.m_DefaultActionsCallbackInterfaces.Contains(instance)) return;
                 m_Wrapper.m_DefaultActionsCallbackInterfaces.Add(instance);
-                @CameraMovement.started += instance.OnCameraMovement;
-                @CameraMovement.performed += instance.OnCameraMovement;
-                @CameraMovement.canceled += instance.OnCameraMovement;
-                @Select.started += instance.OnSelect;
-                @Select.performed += instance.OnSelect;
-                @Select.canceled += instance.OnSelect;
                 @Pause.started += instance.OnPause;
                 @Pause.performed += instance.OnPause;
                 @Pause.canceled += instance.OnPause;
+                @CameraMovement.started += instance.OnCameraMovement;
+                @CameraMovement.performed += instance.OnCameraMovement;
+                @CameraMovement.canceled += instance.OnCameraMovement;
+                @Scroll.started += instance.OnScroll;
+                @Scroll.performed += instance.OnScroll;
+                @Scroll.canceled += instance.OnScroll;
+                @Select.started += instance.OnSelect;
+                @Select.performed += instance.OnSelect;
+                @Select.canceled += instance.OnSelect;
                 @ToggleHelpDialogue.started += instance.OnToggleHelpDialogue;
                 @ToggleHelpDialogue.performed += instance.OnToggleHelpDialogue;
                 @ToggleHelpDialogue.canceled += instance.OnToggleHelpDialogue;
@@ -319,15 +345,18 @@ namespace GameInput
 
             private void UnregisterCallbacks(IDefaultActions instance)
             {
-                @CameraMovement.started -= instance.OnCameraMovement;
-                @CameraMovement.performed -= instance.OnCameraMovement;
-                @CameraMovement.canceled -= instance.OnCameraMovement;
-                @Select.started -= instance.OnSelect;
-                @Select.performed -= instance.OnSelect;
-                @Select.canceled -= instance.OnSelect;
                 @Pause.started -= instance.OnPause;
                 @Pause.performed -= instance.OnPause;
                 @Pause.canceled -= instance.OnPause;
+                @CameraMovement.started -= instance.OnCameraMovement;
+                @CameraMovement.performed -= instance.OnCameraMovement;
+                @CameraMovement.canceled -= instance.OnCameraMovement;
+                @Scroll.started -= instance.OnScroll;
+                @Scroll.performed -= instance.OnScroll;
+                @Scroll.canceled -= instance.OnScroll;
+                @Select.started -= instance.OnSelect;
+                @Select.performed -= instance.OnSelect;
+                @Select.canceled -= instance.OnSelect;
                 @ToggleHelpDialogue.started -= instance.OnToggleHelpDialogue;
                 @ToggleHelpDialogue.performed -= instance.OnToggleHelpDialogue;
                 @ToggleHelpDialogue.canceled -= instance.OnToggleHelpDialogue;
@@ -350,9 +379,10 @@ namespace GameInput
         public DefaultActions @Default => new DefaultActions(this);
         public interface IDefaultActions
         {
-            void OnCameraMovement(InputAction.CallbackContext context);
-            void OnSelect(InputAction.CallbackContext context);
             void OnPause(InputAction.CallbackContext context);
+            void OnCameraMovement(InputAction.CallbackContext context);
+            void OnScroll(InputAction.CallbackContext context);
+            void OnSelect(InputAction.CallbackContext context);
             void OnToggleHelpDialogue(InputAction.CallbackContext context);
         }
     }
