@@ -625,7 +625,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 07bf540f5c74d15409135bdffc70ca09, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -922,7 +922,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1310927480}
   - component: {fileID: 1310927481}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: GroundCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1231,6 +1231,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: -0.2959137
       objectReference: {fileID: 0}
+    - target: {fileID: 4567405796878598151, guid: 4427feec0f105094f8e84ec34f8499f1,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.36299706
+      objectReference: {fileID: 0}
     - target: {fileID: 6309560289017877521, guid: 4427feec0f105094f8e84ec34f8499f1,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -1304,6 +1309,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1434278927}
     m_Modifications:
+    - target: {fileID: 1269257962664533848, guid: 505fc21123befcd41b47ac5a6d9bb6e3,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 1343113213656274884, guid: 505fc21123befcd41b47ac5a6d9bb6e3,
         type: 3}
       propertyPath: m_Name

@@ -22,6 +22,16 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9f64167486590c84ea92460bf3cb088c
+    m_Address: VFX_AgentCollision
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 48ee08ab95186c34897bdc533261c763
+    m_Address: VFX_AgentWalkTrail
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 8f989b8c29a949245b0f0ed3f536e014, type: 2}
   m_SchemaSet:

@@ -50,6 +50,7 @@ public class UI_AgentInfo : MonoBehaviour
     }
     private void RemoveAgentReferences()
     {
+        if (agent == null) return;
         agent.Event_OnHpValueChange -= OnHpChange;
         agent.Event_OnAgentRelease -= OnAgentRelease;
         agent = null;

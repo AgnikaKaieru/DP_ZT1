@@ -33,7 +33,7 @@ namespace Features
 
         public void ShakeCamera(float intensity, float durationP)
         {
-            Debug.LogWarning("Shake: " + intensity + " : " + durationP);
+            //Debug.LogWarning("Shake: " + intensity + " : " + durationP);
             cinemachineBasicMultiChannelPerlin.m_AmplitudeGain = intensity;
 
             startingIntensity = intensity;

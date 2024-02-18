@@ -382,7 +382,7 @@ MonoBehaviour:
     <b>ESC</b> - Pause game\n
 
     <b>WSAD</b>
-    - Move camera\n<b>Scroll</b> - Zoom camera\n<b>L Mouse</b> - Select agent'
+    - Move camera\n<b>Scroll</b> - Camera zoom\n<b>L Mouse</b> - Select agent'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

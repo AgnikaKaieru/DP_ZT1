@@ -3,12 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.AddressableAssets;
 using UnityEngine.AI;
+using UnityEngine.VFX;
 
 using Components.Agents;
 using GameInput;
 using Core;
 using Features;
+
 
 namespace Agents
 {
@@ -137,72 +141,98 @@ namespace Agents
             {
                 currentWaypointIndex = 1;
                 agentState = AgentState.idle;
+                vfx_WalkTrail.SetInt("SpawnRate", 0);
                 return;
             }
 
             if (math.distance(transform.position, navPath.corners[currentWaypointIndex]) <= destinationReachedThreshold)
             {
                 currentWaypointIndex++;
+                return;
+            }
+            
+            if(GroundCheck())
+            {
+                transform.position = Vector3.MoveTowards(transform.position, navPath.corners[currentWaypointIndex], moveSpeed * Time.deltaTime);
+                vfx_WalkTrail.SetInt("SpawnRate", 16);
             }
             else
-                transform.position = Vector3.MoveTowards(transform.position, navPath.corners[currentWaypointIndex], moveSpeed * Time.deltaTime);
+                vfx_WalkTrail.SetInt("SpawnRate", 0);
         }
 
 
 
 
 
+        [Space(20)]
         [Header("Physics")]
         [SerializeField] private Rigidbody rb;
         [SerializeField] private Collider col;
 
+        [SerializeField]  private float groundCheckRadius = 0.4f;
+        [SerializeField]  private float groundCheckOffset = 0.0f;
+        [SerializeField]  private LayerMask groundCheckLayers;
+        private bool GroundCheck()
+        {
+            if (Physics.CheckSphere(transform.position + new Vector3(0, groundCheckOffset, 0), groundCheckRadius, groundCheckLayers)) return true;
+            else return false;
+        }
         private void OnCollisionEnter(Collision collision)
         {
             switch (collision.gameObject.tag)
             {
                 default: break;
                 case "Agent":
-                    float3 contactNormal = collision.contacts[0].normal;
-                    float knockBackForce;
-                    if (collision.gameObject.TryGetComponent(out IAgent agent))
-                    {
-                        knockBackForce = agent.GetMoveSpeed() * 2;
-                        agent.Damage(1);
-                    }
-                    else
-                        knockBackForce = 4;
+                    if (!collision.gameObject.TryGetComponent(out IAgent otherAgent)) { Debug.LogWarning("No 'IAgent' interface on [" + collision.gameObject.name + "]"); return; }
+                    otherAgent.Damage(1);
 
+                    //Knock back
+                    float3 contactNormal = collision.contacts[0].normal;
+                    float knockBackForce = otherAgent.GetMoveSpeed() * 2;
                     contactNormal.y += 1.0f;
                     rb.AddForce(contactNormal * knockBackForce, ForceMode.Impulse);
 
-                    float distanceFromCamera = math.distance(collision.contacts[0].point, Camera.main.transform.position);
-                    //Debug.Log("Distance of hit: " + distanceFromCamera);
-                    if (distanceFromCamera < cameraShakeMaxDistance)
+                    //Agent with higher movementSpeed spawns fx to prevent doubling.
+                    if(moveSpeed > otherAgent.GetMoveSpeed())
                     {
-                        float distanveMod = (cameraShakeMaxDistance - distanceFromCamera) * 0.1f;
-                        float intensity = cameraShakeBaseIntensity * distanveMod;
-                        float duration = cameraShakeBaseDuration * distanveMod;
-                        CinemachineShake.Instance.ShakeCamera(intensity, duration);
+                        //FX
+                        float fxScale = otherAgent.GetMoveSpeed() * collisionVfxBaseScale;
+                        Addressables.InstantiateAsync(collisionVfxAddress, collision.contacts[0].point, quaternion.identity).Completed += (handle) => SpawnCollisionFx(handle, fxScale);
+
+                        ShakeCamera(collision.contacts[0].point);
                     }
                     break;
             }
         }
 
+
+
+
+
         // Graphic //
+        [Space(20)]
         [Header("Graphic")]
         [SerializeField] private Renderer _renderer;
         private IEnumerator EraseAndRelease()
         {
+            vfx_WalkTrail.SetInt("SpawnRate", 0);
+
+            //Erase mesh
             float intensity = 0.0f;
-            while (intensity < 1.0f)
+            while (intensity < 1.2f)
             {
                 intensity += 1 * Time.deltaTime;
                 _renderer.material.SetFloat("_DE_Value", intensity);
                 //yield return new WaitForEndOfFrame(); //Does not work for some reason...
                 yield return new WaitForFixedUpdate();
             }
-            if(Event_OnAgentRelease != null)
+            _renderer.material.SetFloat("_DE_Value", 1.4f);
+
+            //Release
+            ToggleSelectionCircle(false);
+            if (Event_OnAgentRelease != null)
                 Event_OnAgentRelease.Invoke();
+            yield return new WaitForSeconds(3); //Wait for vfx to diappear.
             agentManager.ReleaseAgent(gameObject);
         }
 
@@ -211,11 +241,40 @@ namespace Agents
 
 
         // FX //
+        [Space(10)]
         [Header("FX")]
+        [SerializeField] private VisualEffect vfx_WalkTrail;
+        [SerializeField] private string collisionVfxAddress = "VFX_AgentCollision";
+        [SerializeField] private float collisionVfxBaseScale = 3, collisionVfxBaseLifetime = 0.05f;
         [SerializeField] private int cameraShakeMaxDistance = 20;
         [SerializeField] private float cameraShakeBaseIntensity = 3;
         [SerializeField] private float cameraShakeBaseDuration = 0.2f;
+        private bool lockfx;
 
+        /// <summary>
+        /// Prevents fx from doubling
+        /// </summary>
+        public void LockVFX() { lockfx = true; }
+        private void SpawnCollisionFx(AsyncOperationHandle<GameObject> handle, float scale)
+        {
+            if (lockfx) return;
+            GameObject fxObject = handle.Result;
+            VisualEffect vfx = fxObject.GetComponent<VisualEffect>();
+            vfx.SetFloat("Scale", scale);
+            vfx.SendEvent("Play");
+        }
+        private void ShakeCamera(Vector3 originPoint)
+        {
+            float distanceFromCamera = math.distance(originPoint, Camera.main.transform.position);
+            //Debug.Log("Distance of hit: " + distanceFromCamera);
+            if (distanceFromCamera < cameraShakeMaxDistance)
+            {
+                float distanveMod = (cameraShakeMaxDistance - distanceFromCamera) * 0.1f;
+                float intensity = cameraShakeBaseIntensity * distanveMod;
+                float duration = cameraShakeBaseDuration * distanveMod;
+                CinemachineShake.Instance.ShakeCamera(intensity, duration);
+            }
+        }
 
 
 
@@ -236,6 +295,7 @@ namespace Agents
         }
 
         // Selection arrow //
+        [Space(20)]
         [Header("Selection arrow")]
         /*Alternative for spawning arrow with address
         [SerializeField] private string selectionArrowAddress = "DefaultSelectionArrow";
@@ -258,6 +318,11 @@ namespace Agents
         void OnDrawGizmosSelected()
         {
             if (!debug) return;
+
+            //Draw ground check sphere
+            Gizmos.color = Color.green;
+            Gizmos.DrawSphere(transform.position + new Vector3(0, groundCheckOffset, 0), groundCheckRadius);
+
             //Draw path
             if (navPath == null || navPath.corners.Length < 2) return;
             Gizmos.color = Color.red;
