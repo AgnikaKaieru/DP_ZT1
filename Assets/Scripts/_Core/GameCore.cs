@@ -1,8 +1,9 @@
-using GameInput;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+using GameInput;
 
 namespace Core
 {
