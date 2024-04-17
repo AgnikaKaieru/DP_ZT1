@@ -8,6 +8,12 @@ namespace Core
     {
         public static SceneCore Instance { get; private set; }
 
+        private void Awake()
+        {
+            Instance = this;
+            GameCore.Instance.AssignSceneCore();
+        }
+
         public virtual void Initialize_SceneCore()
         {
             Debug.Log("<color=white><b>Initializing scene core...</b></color>");

@@ -27,9 +27,11 @@ namespace Core
             inputManager.Initialize_Input();
             inputManager.Event_PauseButtonPressed += PauseInput;
             inputManager.Event_HelpButtonPressed += HelpInput;
-
-            //Initialize scene core
-            GameObject.FindGameObjectWithTag("SceneCore").GetComponent<SceneCore>().Initialize_SceneCore();
+        }
+        public void AssignSceneCore()
+        {
+            //Initialize scene Core
+            SceneCore.Instance.Initialize_SceneCore();
             SceneCore.Instance.StartScene();
         }
 
