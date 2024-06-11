@@ -14,12 +14,14 @@ namespace Core
 
         private void Awake()
         {
+            if(GameCore.Instance != null) { Debug.LogWarning("'GameGore' instance already exists."); Destroy(gameObject); return; }
             Instance = this;
             pauseIndicator.SetActive(false);
             Initialize_Core();
         }
 
         // Initialization //
+        #region Initialization
         private void Initialize_Core()
         {
             //Initialize basic components
@@ -34,8 +36,10 @@ namespace Core
             SceneCore.Instance.Initialize_SceneCore();
             SceneCore.Instance.StartScene();
         }
+        #endregion
 
         // Pause event //
+        #region Pause
         [Header("PauseEvent")]
         [SerializeField] private GameObject pauseIndicator;
         public bool paused { get; private set; }
@@ -65,12 +69,15 @@ namespace Core
             if (!paused) Pause();
             else Resume();
         }
+        #endregion
 
         // UI //
+        #region UI
         [Header("UI")]
         public Transform mainCanvas;
         [SerializeField] private GameObject helpDialogue;
 
         private void HelpInput() { helpDialogue.SetActive(!helpDialogue.activeInHierarchy); }
+        #endregion
     }
 }

@@ -18,6 +18,8 @@ public class UI_AgentInfo : MonoBehaviour
     [SerializeField] private Color[] colors_HpSlider = new Color[2];
     IAgent agent;
 
+    // Initialization //
+    #region Initialization
     private void Awake() 
     {
         Instance = this;
@@ -48,6 +50,25 @@ public class UI_AgentInfo : MonoBehaviour
             RemoveAgentReferences();
         }
     }
+    #endregion
+
+    // Hp //
+    #region Hp
+    public void OnHpChange(int currentHp)
+    {
+        text_HpValue.text = currentHp.ToString();
+        slider_HpValue.value = currentHp;
+        UpdateSliderColor();
+    }
+    private void UpdateSliderColor()
+    {
+        if (slider_HpValue.value <= 1) image_HpSliderFill.color = colors_HpSlider[1];
+        else image_HpSliderFill.color = colors_HpSlider[0];
+    }
+    #endregion
+
+    // Unloading //
+    #region Unloading
     private void RemoveAgentReferences()
     {
         if (agent == null) return;
@@ -55,22 +76,10 @@ public class UI_AgentInfo : MonoBehaviour
         agent.Event_OnAgentRelease -= OnAgentRelease;
         agent = null;
     }
-    private void UpdateSliderColor()
-    {
-        if (slider_HpValue.value <= 1) image_HpSliderFill.color = colors_HpSlider[1];
-        else image_HpSliderFill.color = colors_HpSlider[0];
-    }
-
-    // Agent events //
-    public void OnHpChange(int currentHp)
-    {
-        text_HpValue.text = currentHp.ToString();
-        slider_HpValue.value = currentHp;
-        UpdateSliderColor();
-    }
     public void OnAgentRelease()
     {
         RemoveAgentReferences();
         uiPanel.SetActive(false);
     }
+    #endregion
 }

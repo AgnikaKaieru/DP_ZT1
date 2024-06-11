@@ -31,6 +31,7 @@ namespace Agents
 
 
         // Initialization //
+        #region Initialization
         public void Initialize_AgentManager()
         {
             Initialize_PlayableArea();
@@ -50,10 +51,10 @@ namespace Agents
             SpawnAgent();
             StartCoroutine(StartAgentSpawnTimer());
         }
-
-
+        #endregion
 
         // Playable area //
+        #region Area
         private void Initialize_PlayableArea()
         {
             playableAreaSize = math.clamp(playableAreaSize, new float2(1, 1), new float2(100, 100));
@@ -76,10 +77,10 @@ namespace Agents
         /// Returns point inside area on height of 0.
         /// </summary>
         public float3 GetPointInsideArea() { return GetPointInsideArea(0); }
-
-
+        #endregion
 
         // Agent load/unload //
+        #region Agent loading
         private void SpawnAgent()
         {
             if (agentList.Count >= maxAgents) { Debug.LogWarning("Max agent amount reached!"); return; }
@@ -99,12 +100,12 @@ namespace Agents
             agentList.Remove(agent);
             Addressables.ReleaseInstance(agent);
         }
-
-
+        #endregion
 
 
 
         // Editor //
+        #region Editor
 #if UNITY_EDITOR
         [Header("Editor")]
         [SerializeField] private bool debug = true;
@@ -116,5 +117,6 @@ namespace Agents
             Gizmos.DrawWireCube(transform.position, new float3(playableAreaSize.x, 2, playableAreaSize.y));
         }
 #endif
+        #endregion
     }
 }

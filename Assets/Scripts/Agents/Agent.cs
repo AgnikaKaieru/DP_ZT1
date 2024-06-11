@@ -30,6 +30,8 @@ namespace Agents
 
         public string GetAgentName() { return agentName; }
 
+        // Initialization //
+        #region Initialization
         public void InitializeAgent(IAgentManager agentManagerP, int idp)
         {
             Debug.Log("<color=white><b>Initializing agent...</b></color>");
@@ -45,18 +47,19 @@ namespace Agents
             GameCore.Instance.Event_Pause += PauseEvent;
             paused = GameCore.Instance.paused;
         }
+        #endregion
 
+        // Pause
+        #region Pause
         private bool paused = true;
         private void PauseEvent(bool b)
         {
             paused = b;
         }
-
-
-
-
+        #endregion
 
         // Stats //
+        #region Stats
         [Header("Stats")]
         [SerializeField] private int maxHp = 3;
         private int currentHp;
@@ -78,11 +81,10 @@ namespace Agents
             if (Event_OnHpValueChange != null)
                 Event_OnHpValueChange.Invoke(currentHp);
         }
-
-
-
+        #endregion
 
         // Logic //
+        #region Logic
         private float waitTimeout = 1.0f, waitTimeoutDelta =1.0f;
 
         private void Update()
@@ -104,12 +106,9 @@ namespace Agents
                 case AgentState.moving: Move(); break;
             }
         }
-
-
-
-
-
+        #endregion
         // Navigation //
+        #region Navigation
         [Header("Movement")]
         [SerializeField] private float moveSpeed = 1.0f;
         private NavMeshPath navPath;
@@ -159,11 +158,9 @@ namespace Agents
             else
                 vfx_WalkTrail.SetInt("SpawnRate", 0);
         }
-
-
-
-
-
+        #endregion
+        // Physics //
+        #region Physics
         [Space(20)]
         [Header("Physics")]
         [SerializeField] private Rigidbody rb;
@@ -204,12 +201,12 @@ namespace Agents
                     break;
             }
         }
+        #endregion
 
-
-
-
-
-        // Graphic //
+        // Visual //
+        #region Visual
+        // Model //
+        #region Model
         [Space(20)]
         [Header("Graphic")]
         [SerializeField] private Renderer _renderer;
@@ -235,12 +232,9 @@ namespace Agents
             yield return new WaitForSeconds(3); //Wait for vfx to diappear.
             agentManager.ReleaseAgent(gameObject);
         }
-
-
-
-
-
+        #endregion
         // FX //
+        #region FX
         [Space(10)]
         [Header("FX")]
         [SerializeField] private VisualEffect vfx_WalkTrail;
@@ -275,11 +269,10 @@ namespace Agents
                 CinemachineShake.Instance.ShakeCamera(intensity, duration);
             }
         }
-
-
-
-
+        #endregion
+        #endregion
         // Selection //
+        #region Selection
         // ISelectableObject //
         public void OnHoverEnter() { ToggleSelectionArrow(true); }
         public void OnHoverExit() { ToggleSelectionArrow(false); }
@@ -306,12 +299,12 @@ namespace Agents
 
         private void ToggleSelectionArrow(bool b) { selectionArrow.SetActive(b); }
         private void ToggleSelectionCircle(bool b) { selectionCircle.SetActive(b); }
-
-
+        #endregion
 
 
 
         // Editor //
+        #region Editor
 #if UNITY_EDITOR
         [Header("Editor")]
         [SerializeField] private bool debug = true;
@@ -334,5 +327,6 @@ namespace Agents
             }
         }
 #endif
+        #endregion
     }
 }

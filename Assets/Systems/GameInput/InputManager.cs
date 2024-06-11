@@ -34,6 +34,8 @@ namespace GameInput
         public Vector2 cameraMoveLimitRange = new Vector2(5,5);
         public Vector2 cameraZoomRange = new Vector2(10,30);
 
+        // Initialization //
+        #region Initialization
         public void Initialize_Input()
         {
             Debug.Log("<color=white><b>Initializing input manager...</b></color>");
@@ -66,8 +68,15 @@ namespace GameInput
             inputActions.Enable();
             active = true;
         }
+        #endregion
 
-
+        // Update //
+        private void Update()
+        {
+            if (!active) return;
+            Update_Camera();
+            Update_ObjectSelection();
+        }
 
 
 
@@ -81,6 +90,8 @@ namespace GameInput
         public bool select, pointTo;
         private Transform hoveredObject, selectedObject;
 
+        #region Input events
+        #region Input events (Main)
         private void Pause(InputAction.CallbackContext context)
         {
             switch (context.phase)
@@ -106,6 +117,8 @@ namespace GameInput
                     break;
             }
         }
+        #endregion
+        #region Input events (Camera)
         private void MoveCamera(InputAction.CallbackContext context)
         {
             switch (context.phase)
@@ -122,6 +135,8 @@ namespace GameInput
                 case InputActionPhase.Performed: scrollInput = context.ReadValue<Vector2>(); break;
             }
         }
+        #endregion
+        #region Input events (Agents)
         private void Select(InputAction.CallbackContext context)
         {
             switch (context.phase)
@@ -131,22 +146,13 @@ namespace GameInput
                 case InputActionPhase.Canceled: select = false; break;
             }
         }
-
-
-
-
-
-        // Update //
-        private void Update()
-        {
-            if (!active) return;
-            Update_Camera();
-            Update_ObjectSelection();
-        }
+        #endregion
+        #endregion
 
 
 
         // Camera logic //
+        #region Camera
         private void Update_Camera()
         {
             //Camera movement
@@ -168,10 +174,10 @@ namespace GameInput
             cameraDistance = Mathf.Lerp(cameraDistance, cameraDistanceTarget, cameraZoomDamping * Time.deltaTime);
             cinemashineFollow.CameraDistance = cameraDistance;
         }
-
-
+        #endregion
 
         // Object selection //
+        #region Selection
         private void Update_ObjectSelection()
         {
             //Object selection
@@ -236,5 +242,6 @@ namespace GameInput
             selectedObject.GetComponent<ISelectableObject>().OnRelease();
             selectedObject = null;
         }
+        #endregion
     }
 }
